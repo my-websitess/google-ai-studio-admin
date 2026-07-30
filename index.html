@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rangrezz — Catalog Demo</title>
+<title>Rangrezz Studio — Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -36,7 +36,6 @@
   h1{ font-family:'Fraunces', serif; font-weight:700; font-size:clamp(30px,6vw,48px); margin:0 0 8px; letter-spacing:-0.01em; }
   h1 em{ color:var(--marigold); font-style:italic; }
   .tagline{ color:var(--ivory-dim); font-size:15px; max-width:440px; margin:0 auto; }
-  .hint{ color:var(--ivory-dim); font-size:12.5px; max-width:440px; margin:10px auto 0; opacity:.85; }
 
   .controls{ max-width:1080px; margin:28px auto 0; padding:0 20px; }
   .search-row{ position:relative; }
@@ -91,6 +90,7 @@
   .load-more-wrap{ text-align:center; padding:8px 0 40px; }
   #loadMoreBtn{ background:transparent; border:1.5px solid var(--gold); color:var(--gold); padding:11px 26px; border-radius:999px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
   #loadMoreBtn:hover{ background:var(--gold); color:#211016; }
+  #loadMoreBtn:disabled{ opacity:0.6; cursor:not-allowed; }
 
   .selection-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--bg-elevated); border-top:1px solid var(--gold); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:60; transform:translateY(110%); transition:transform .25s ease; }
   .selection-bar.show{ transform:translateY(0); }
@@ -116,7 +116,7 @@
 
 <header>
   <div class="eyebrow">WhatsApp Catalog</div>
-  <h1> Aruna Textile Hub <em>Studio</em></h1>
+  <h1> Rangrezz <em>Studio</em></h1>
   <p class="tagline">Select karo, share karo — kisi ko bhi, seedha WhatsApp par.</p>
 </header>
 
@@ -154,7 +154,7 @@
   <button id="loadMoreBtn">Load more</button>
 </div>
 
-<footer>Demo catalog</footer>
+<footer>Rangrezz Studio Catalog</footer>
 
 <div class="selection-bar" id="selectionBar">
   <div class="count" id="selCount">0 items selected</div>
@@ -175,10 +175,30 @@
 <script>
   let products = [];
   let productsLoaded = false;
+  let hasMoreFromFirestore = true;
+  const PAGE_SIZE = 12;
+  let visibleCount = PAGE_SIZE;
+  let selected = new Set();
 
-  window.setProducts = function(data){
+  window.setProducts = function(data, hasMore = true){
     productsLoaded = true;
     products = data;
+    hasMoreFromFirestore = hasMore;
+    visibleCount = PAGE_SIZE;
+    render();
+  };
+
+  window.appendProducts = function(newProducts, hasMore = true){
+    const existingIds = new Set(products.map(p => p.id));
+    const uniqueNew = newProducts.filter(p => !existingIds.has(p.id));
+    products = [...products, ...uniqueNew];
+    hasMoreFromFirestore = hasMore;
+    visibleCount = products.length;
+    render();
+  };
+
+  window.updateHasMore = function(hasMore){
+    hasMoreFromFirestore = hasMore;
     render();
   };
 
@@ -192,9 +212,6 @@
   let activeCategory = 'All';
   let searchQuery = '';
   let sortBy = 'relevance';
-  let visibleCount = 24;
-  const PAGE_SIZE = 24;
-  let selected = new Set();
 
   function parseQuery(q){
     q = q.toLowerCase().trim();
@@ -231,7 +248,6 @@
     return list;
   }
 
-  // DIRECT SHARE WITHOUT COMPRESSION / CANVAS RE-ENCODING
   async function shareProducts(list){
     const withImages = list.filter(p=>p.image);
     let files = [];
@@ -263,7 +279,6 @@
   }
   window.shareProducts = shareProducts;
 
-  // DIRECT IMAGE DETAILS FOR PDF WITHOUT COMPRESSION
   function getImageDetails(url){
     return new Promise((resolve, reject) => {
       fetch(url)
@@ -456,7 +471,9 @@
     empty.style.display = 'none';
     const visible = filtered.slice(0, visibleCount);
     grid.innerHTML = visible.map(cardHTML).join('');
-    loadMoreWrap.style.display = visibleCount < filtered.length ? 'block' : 'none';
+
+    const canShowMoreLocal = visibleCount < filtered.length;
+    loadMoreWrap.style.display = (canShowMoreLocal || hasMoreFromFirestore) ? 'block' : 'none';
     renderSelectionBar();
   }
 
@@ -464,7 +481,17 @@
     searchQuery = e.target.value; visibleCount = PAGE_SIZE; render();
   });
   document.getElementById('sortBy').addEventListener('change', (e)=>{ sortBy = e.target.value; render(); });
-  document.getElementById('loadMoreBtn').addEventListener('click', ()=>{ visibleCount += PAGE_SIZE; render(); });
+
+  document.getElementById('loadMoreBtn').addEventListener('click', ()=>{
+    const filtered = getFiltered();
+    if(visibleCount < filtered.length){
+      visibleCount += PAGE_SIZE;
+      render();
+    } else if(window.loadMoreFromFirestore){
+      window.loadMoreFromFirestore();
+    }
+  });
+
   document.getElementById('selectAllBtn').addEventListener('click', toggleSelectAll);
   document.querySelectorAll('.try-chip').forEach(chip=>{
     chip.addEventListener('click', ()=>{
@@ -488,7 +515,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBKdlUqXFF2rK0yZChhuzQRgfL_Tan4wRM",
@@ -501,24 +528,84 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const productsQuery = query(collection(db, "products"), orderBy("createdAt", "desc"));
 
-  onSnapshot(productsQuery, (snapshot) => {
-    const products = snapshot.docs.map(docSnap => {
-      const d = docSnap.data();
-      return {
-        id: docSnap.id,
-        name: d.name || '',
-        category: d.category || '',
-        price: d.price || 0,
-        image: d.image || ''
-      };
-    });
-    window.setProducts(products);
-  }, (error) => {
-    console.error("Firestore error:", error);
-    window.setProducts([]);
-  });
+  let lastDoc = null;
+  let isLoading = false;
+  const FETCH_LIMIT = 50;
+
+  // 1. Initial Load (First 50 Items)
+  async function loadInitialProducts() {
+    try {
+      const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(FETCH_LIMIT));
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        lastDoc = snapshot.docs[snapshot.docs.length - 1];
+        const products = snapshot.docs.map(docSnap => {
+          const d = docSnap.data();
+          return {
+            id: docSnap.id,
+            name: d.name || '',
+            category: d.category || '',
+            price: d.price || 0,
+            image: d.image || ''
+          };
+        });
+        const hasMore = snapshot.docs.length === FETCH_LIMIT;
+        window.setProducts(products, hasMore);
+      } else {
+        window.setProducts([], false);
+      }
+    } catch (error) {
+      console.error("Firestore Error:", error);
+      window.setProducts([], false);
+    }
+  }
+
+  // 2. Pagination Load (Next 50 Items on Load More Click)
+  window.loadMoreFromFirestore = async function() {
+    if (isLoading || !lastDoc) return;
+    isLoading = true;
+
+    const btn = document.getElementById('loadMoreBtn');
+    if (btn) btn.textContent = 'Loading...';
+
+    try {
+      const q = query(
+        collection(db, "products"),
+        orderBy("createdAt", "desc"),
+        startAfter(lastDoc),
+        limit(FETCH_LIMIT)
+      );
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        lastDoc = snapshot.docs[snapshot.docs.length - 1];
+        const newProducts = snapshot.docs.map(docSnap => {
+          const d = docSnap.data();
+          return {
+            id: docSnap.id,
+            name: d.name || '',
+            category: d.category || '',
+            price: d.price || 0,
+            image: d.image || ''
+          };
+        });
+        const hasMore = snapshot.docs.length === FETCH_LIMIT;
+        window.appendProducts(newProducts, hasMore);
+      } else {
+        window.updateHasMore(false);
+      }
+    } catch (error) {
+      console.error("Load More Error:", error);
+    } finally {
+      isLoading = false;
+      if (btn) btn.textContent = 'Load more';
+    }
+  };
+
+  // Start initial fetch
+  loadInitialProducts();
 </script>
 </body>
 </html>
