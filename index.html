@@ -1,521 +1,713 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rangrezz Studio — Catalog</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#1B0E14;
-    --bg-elevated:#241220;
-    --bg-card:#2E1620;
-    --ivory:#F5E9DD;
-    --ivory-dim:#C9B8AE;
-    --gold:#D4A657;
-    --marigold:#E8873A;
-    --blush:#E8B4C4;
-    --line: rgba(245,233,221,0.14);
-    --whatsapp:#3FA772;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:
-      radial-gradient(circle at 15% 0%, rgba(212,166,87,0.10), transparent 45%),
-      radial-gradient(circle at 90% 20%, rgba(232,180,196,0.08), transparent 40%),
-      var(--bg);
-    color:var(--ivory);
-    font-family:'Manrope', sans-serif;
-    min-height:100vh;
-    padding-bottom:70px;
-  }
-  header{ padding:36px 20px 20px; text-align:center; border-bottom:1px solid var(--line); }
-  .eyebrow{ font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
-  h1{ font-family:'Fraunces', serif; font-weight:700; font-size:clamp(30px,6vw,48px); margin:0 0 8px; letter-spacing:-0.01em; }
-  h1 em{ color:var(--marigold); font-style:italic; }
-  .tagline{ color:var(--ivory-dim); font-size:15px; max-width:440px; margin:0 auto; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rangrezz Admin — Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0E070B;
+      --bg-elevated: #180D14;
+      --bg-card: #20111B;
+      --ivory: #F8ECE2;
+      --ivory-dim: #BDAEA4;
+      --gold: #D4A657;
+      --gold-bright: #F5CA7B;
+      --danger: #E85555;
+      --line: rgba(245, 236, 226, 0.1);
+      --line-gold: rgba(212, 166, 87, 0.3);
+      --whatsapp: #25D366;
+    }
 
-  .controls{ max-width:1080px; margin:28px auto 0; padding:0 20px; }
-  .search-row{ position:relative; }
-  .search-row svg{ position:absolute; left:16px; top:50%; transform:translateY(-50%); width:18px; height:18px; stroke:var(--ivory-dim); }
-  .search-row input{ width:100%; padding:15px 16px 15px 46px; background:var(--bg-elevated); border:1px solid var(--line); border-radius:14px; color:var(--ivory); font-family:'Manrope', sans-serif; font-size:15px; }
-  .search-row input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
-  .search-row input::placeholder{ color:var(--ivory-dim); opacity:.65; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(212,166,87,0.12), transparent 50%),
+        radial-gradient(ellipse at 80% 40%, rgba(220,120,160,0.06), transparent 40%),
+        var(--bg);
+      color: var(--ivory);
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      padding: 20px 14px 120px;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  .try-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-  .try-chip{ font-size:12.5px; color:var(--ivory-dim); background:transparent; border:1px dashed var(--line); border-radius:999px; padding:6px 12px; cursor:pointer; font-family:'Manrope',sans-serif; }
-  .try-chip:hover{ border-color:var(--gold); color:var(--gold); }
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
 
-  .filter-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top:20px; }
-  .cat-chips{ display:flex; gap:8px; flex-wrap:wrap; }
-  .cat-chip{ font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; padding:8px 15px; border-radius:999px; border:1.5px dashed var(--gold); background:transparent; color:var(--ivory); cursor:pointer; }
-  .cat-chip.active{ background:var(--gold); color:#211016; border-style:solid; }
-  select#sortBy{ background:var(--bg-elevated); color:var(--ivory); border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-family:'Manrope',sans-serif; font-size:13px; }
+    /* Header */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 10px;
+    }
+    .brand-header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 700;
+      color: var(--ivory);
+      letter-spacing: -0.02em;
+    }
+    .brand-header h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--ivory-dim);
+      margin-top: 4px;
+      font-weight: 500;
+    }
 
-  .count-row{ max-width:1080px; margin:16px auto 0; padding:0 20px; font-size:13px; color:var(--ivory-dim); display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .select-all-btn{ background:transparent; border:1px dashed var(--gold); color:var(--gold); border-radius:999px; padding:5px 12px; font-family:'Manrope',sans-serif; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .select-all-btn:hover{ background:var(--gold); color:#211016; }
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      background: rgba(24, 13, 20, 0.8);
+      border: 1px solid var(--line);
+      padding: 5px;
+      border-radius: 999px;
+      max-width: 440px;
+      margin: 0 auto 28px;
+      backdrop-filter: blur(12px);
+    }
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--ivory-dim);
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--gold);
+      color: #0E070B;
+      box-shadow: 0 4px 18px rgba(212, 166, 87, 0.3);
+    }
 
-  .grid{ max-width:1080px; margin:14px auto 0; padding:0 20px 40px; display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); gap:18px; }
-  .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; transition:outline .15s ease; }
-  .card.selected{ outline:2px solid var(--gold); outline-offset:-1px; }
+    /* Section Views */
+    .view-section { display: none; }
+    .view-section.active { display: block; }
 
-  .swatch{ position:relative; height:150px; display:flex; align-items:flex-end; padding:12px; overflow:hidden; cursor:pointer;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1.4px), linear-gradient(135deg, var(--g1), var(--g2));
-    background-size: 14px 14px, cover; }
-  .swatch img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; opacity:0; transition:opacity .35s ease; }
-  .swatch img.loaded{ opacity:1; }
-  .swatch::after{ content:""; position:absolute; left:0; right:0; bottom:-1px; height:12px; z-index:2; background:var(--bg-card);
-    clip-path: polygon(0% 0%,4% 100%,8% 0%,12% 100%,16% 0%,20% 100%,24% 0%,28% 100%,32% 0%,36% 100%,40% 0%,44% 100%,48% 0%,52% 100%,56% 0%,60% 100%,64% 0%,68% 100%,72% 0%,76% 100%,80% 0%,84% 100%,88% 0%,92% 100%,96% 0%,100% 100%,100% 0%); }
-  .swatch span{ position:relative; z-index:1; font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:13px; color:rgba(255,255,255,0.92); text-shadow:0 1px 3px rgba(0,0,0,0.35); }
+    /* Main Glass Panels */
+    .panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
 
-  .select-box{ position:absolute; top:8px; left:8px; z-index:3; width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,0.9); background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .select-box.checked{ background:var(--gold); border-color:var(--gold); }
-  .select-box svg{ width:13px; height:13px; opacity:0; }
-  .select-box.checked svg{ opacity:1; }
+    /* Form Controls */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--ivory);
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    select:focus, input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 166, 87, 0.15);
+    }
 
-  .card-body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:8px; flex:1; }
-  .cat-tag{ align-self:flex-start; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; border:1px dashed var(--blush); color:var(--blush); border-radius:999px; padding:3px 9px; }
-  .card-name{ font-size:14.5px; font-weight:600; line-height:1.3; }
-  .card-price{ font-family:'Fraunces', serif; font-weight:700; font-size:19px; color:var(--gold); margin-top:auto; }
-  .wa-btn{ margin-top:6px; display:flex; align-items:center; justify-content:center; gap:7px; background:var(--whatsapp); color:#0F1F17; border:none; border-radius:999px; padding:10px 12px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
-  .wa-btn:hover{ filter:brightness(1.08); }
-  .wa-btn svg{ width:15px; height:15px; }
+    /* Drag & Drop Area */
+    .dropzone {
+      border: 2px dashed var(--line-gold);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      background: rgba(212, 166, 87, 0.02);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      background: rgba(212, 166, 87, 0.08);
+      border-style: solid;
+    }
+    .dropzone-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .dropzone p {
+      font-weight: 700;
+      color: var(--ivory);
+      font-size: 15px;
+    }
+    .dropzone span {
+      font-size: 12px;
+      color: var(--ivory-dim);
+      display: block;
+      margin-top: 4px;
+    }
 
-  .empty{ max-width:1080px; margin:30px auto; padding:40px 20px; text-align:center; color:var(--ivory-dim); }
-  .empty strong{ display:block; color:var(--ivory); font-family:'Fraunces',serif; font-size:20px; margin-bottom:6px; }
+    /* Controls Bar in Manage Tab */
+    .manage-toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .action-group {
+      display: flex;
+      gap: 10px;
+    }
 
-  .load-more-wrap{ text-align:center; padding:8px 0 40px; }
-  #loadMoreBtn{ background:transparent; border:1.5px solid var(--gold); color:var(--gold); padding:11px 26px; border-radius:999px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
-  #loadMoreBtn:hover{ background:var(--gold); color:#211016; }
-  #loadMoreBtn:disabled{ opacity:0.6; cursor:not-allowed; }
+    .btn-pill {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ivory);
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-pill:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn-pill-gold {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 166, 87, 0.08);
+    }
+    .btn-pill-gold:hover {
+      background: var(--gold);
+      color: #0E070B;
+    }
 
-  .selection-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--bg-elevated); border-top:1px solid var(--gold); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:60; transform:translateY(110%); transition:transform .25s ease; }
-  .selection-bar.show{ transform:translateY(0); }
-  .selection-bar .count{ font-weight:700; font-family:'Fraunces',serif; font-size:15px; }
-  .selection-bar .actions{ display:flex; gap:10px; }
-  .clear-btn{ background:transparent; border:1px solid var(--line); color:var(--ivory-dim); padding:10px 16px; border-radius:999px; font-family:'Manrope',sans-serif; font-size:13px; cursor:pointer; }
-  .send-sel-btn{ background:transparent; border:1.5px solid var(--whatsapp); color:var(--whatsapp); border-radius:999px; padding:10px 16px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:7px; }
-  .send-sel-btn svg{ width:15px; height:15px; }
-  .pdf-btn{ background:var(--gold); color:#211016; border:none; border-radius:999px; padding:10px 18px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:7px; }
-  .pdf-btn svg{ width:15px; height:15px; }
-  .pdf-btn:disabled{ opacity:.6; cursor:wait; }
+    .counter-badge {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ivory-dim);
+    }
 
-  footer{ text-align:center; padding:24px 20px 40px; color:var(--ivory-dim); font-size:12px; border-top:1px solid var(--line); }
+    /* Search Box */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .search-wrap input {
+      padding-left: 40px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ivory-dim);
+      font-size: 16px;
+      pointer-events: none;
+    }
 
-  @media (max-width:480px){
-    .grid{ grid-template-columns:repeat(2, 1fr); gap:12px; }
-    .filter-row{ flex-direction:column; align-items:stretch; }
-    select#sortBy{ width:100%; }
-  }
-</style>
+    /* 🎯 UNIFORM BULLETPROOF CARD GRID SYSTEM */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: stretch;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .grid-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+      .panel { padding: 14px; border-radius: 16px; }
+      body { padding-left: 10px; padding-right: 10px; }
+    }
+
+    /* Standardized Product & Upload Cards */
+    .card-item {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    /* Delete Card Specific Interactive Styling */
+    .delete-card {
+      cursor: pointer;
+    }
+    .delete-card:hover {
+      border-color: rgba(212, 166, 87, 0.4);
+      transform: translateY(-2px);
+    }
+    .delete-card.selected {
+      border-color: var(--danger) !important;
+      box-shadow: 0 0 0 2px var(--danger);
+      background: rgba(232, 85, 85, 0.08);
+    }
+
+    /* Bulletproof Uniform Aspect Ratio Box */
+    .card-media {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #140B11;
+      flex-shrink: 0;
+    }
+    .card-media img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Overlays inside Image Box */
+    .checkbox-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .delete-card.selected .checkbox-overlay {
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+    .checkbox-overlay svg {
+      width: 13px;
+      height: 13px;
+      stroke: #ffffff;
+      stroke-width: 3.5;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .delete-card.selected .checkbox-overlay svg {
+      opacity: 1;
+    }
+
+    .edit-pill-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      background: rgba(14, 7, 11, 0.85);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 999px;
+      padding: 4px 11px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      font-family: 'Manrope', sans-serif;
+    }
+    .edit-pill-btn:hover {
+      background: var(--gold);
+      color: #0E070B;
+    }
+
+    .remove-pill-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      background: rgba(232, 85, 85, 0.95);
+      color: #FFF;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Strictly Formatted Details Container */
+    .card-body {
+      padding: 8px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-grow: 1;
+      gap: 3px;
+    }
+    .card-category {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ivory);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.35;
+    }
+    .card-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      font-family: 'Fraunces', serif;
+      margin-top: 2px;
+    }
+
+    /* Upload inputs inside preview card */
+    .upload-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .upload-inputs input {
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* Upload Submit Button */
+    .primary-btn {
+      width: 100%;
+      background: var(--whatsapp);
+      color: #072212;
+      border: none;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-top: 22px;
+      font-family: 'Manrope', sans-serif;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.25);
+      transition: filter 0.2s ease;
+    }
+    .primary-btn:hover { filter: brightness(1.08); }
+    .primary-btn:disabled { opacity: 0.5; cursor: wait; box-shadow: none; }
+
+    /* Glassmorphic Floating Delete Bar */
+    .batch-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(140%);
+      background: rgba(24, 13, 20, 0.92);
+      border: 1px solid var(--danger);
+      padding: 12px 24px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85);
+      z-index: 900;
+      backdrop-filter: blur(16px);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .batch-bar.show { transform: translateX(-50%) translateY(0); }
+    .batch-bar-count { font-weight: 700; font-size: 14px; color: var(--ivory); }
+    
+    .batch-delete-btn {
+      background: var(--danger);
+      color: #FFF;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* Edit Modal Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+    .modal-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--line-gold);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.8);
+    }
+    .modal-card h3 {
+      font-family: 'Fraunces', serif;
+      color: var(--gold);
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    #statusMsg {
+      margin-top: 16px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    /* Failed Card State */
+    .card-failed {
+      border-color: var(--danger) !important;
+    }
+    .fail-badge {
+      background: var(--danger);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px;
+      text-align: center;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="eyebrow">WhatsApp Catalog</div>
-  <h1> Rangrezz <em>Studio</em></h1>
-  <p class="tagline">Select karo, share karo — kisi ko bhi, seedha WhatsApp par.</p>
-</header>
+<!-- 🔒 SECRET PIN LOCK SCREEN -->
+<div id="lockScreen" style="position: fixed; inset: 0; background: #0E070B; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px;">
+  <h2 style="font-family: 'Fraunces', serif; color: #D4A657; font-size: 30px;">🔒 Admin Panel Locked</h2>
+  <p style="color: #BDAEA4; font-size: 14px;">Secret PIN enter karke unlock karein</p>
+  <input type="password" id="pinInput" placeholder="Enter PIN" style="max-width: 220px; text-align: center; font-size: 22px; letter-spacing: 6px; padding: 12px; border-radius: 12px; border: 1px solid rgba(245, 236, 226, 0.2); background: #20111B; color: #F8ECE2; outline: none;">
+  <button onclick="checkPin()" style="background: #D4A657; color: #0E070B; border: none; padding: 12px 36px; font-weight: 800; border-radius: 999px; cursor: pointer; font-size: 15px; font-family: 'Manrope', sans-serif;">Unlock Panel</button>
+  <div id="pinError" style="color: #E85555; font-weight: bold; font-size: 13px; height: 18px;"></div>
+</div>
 
-<div class="controls">
-  <div class="search-row">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input id="searchInput" type="text" placeholder="Try: saree under 1500, kurti above 400...">
+<div class="container">
+  
+  <div class="brand-header">
+    <h1>Rangrezz <span>Admin Control</span></h1>
+    <p class="brand-subtitle">Catalog Upload & Product Management Console</p>
   </div>
-  <div class="try-row">
-    <button class="try-chip" data-q="saree under 1000">saree under 1000</button>
-    <button class="try-chip" data-q="kurti under 400">kurti under 400</button>
-    <button class="try-chip" data-q="lehenga above 3000">lehenga above 3000</button>
-    <button class="try-chip" data-q="dupatta under 300">dupatta under 300</button>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('upload')">Upload Photos</button>
+    <button class="tab-btn" onclick="switchTab('manage')">Manage & Delete</button>
   </div>
-  <div class="filter-row">
-    <div class="cat-chips" id="catChips"></div>
-    <select id="sortBy">
-      <option value="relevance">Sort: Relevance</option>
-      <option value="priceLow">Price: Low to High</option>
-      <option value="priceHigh">Price: High to Low</option>
-    </select>
-  </div>
-</div>
 
-<div class="count-row">
-  <span id="countText"></span>
-  <button class="select-all-btn" id="selectAllBtn">Select All</button>
-</div>
-<div class="grid" id="grid"></div>
-<div id="emptyState" style="display:none" class="empty">
-  <strong>Koi item nahi mila</strong>
-  Price range badha ke ya category badal ke dekhein.
-</div>
-<div class="load-more-wrap" id="loadMoreWrap">
-  <button id="loadMoreBtn">Load more</button>
-</div>
-
-<footer>Rangrezz Studio Catalog</footer>
-
-<div class="selection-bar" id="selectionBar">
-  <div class="count" id="selCount">0 items selected</div>
-  <div class="actions">
-    <button class="clear-btn" id="clearSelBtn">Clear</button>
-    <button class="send-sel-btn" id="sendSelectedBtn">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.9.53 3.68 1.44 5.2L2 22l4.94-1.4A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.06.87.85-2.98-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
-      Photo
-    </button>
-    <button class="pdf-btn" id="sendPdfBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-      <span id="pdfBtnLabel">PDF</span>
-    </button>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-  let products = [];
-  let productsLoaded = false;
-  let hasMoreFromFirestore = true;
-  const PAGE_SIZE = 12;
-  let visibleCount = PAGE_SIZE;
-  let selected = new Set();
-
-  window.setProducts = function(data, hasMore = true){
-    productsLoaded = true;
-    products = data;
-    hasMoreFromFirestore = hasMore;
-    visibleCount = PAGE_SIZE;
-    render();
-  };
-
-  window.appendProducts = function(newProducts, hasMore = true){
-    const existingIds = new Set(products.map(p => p.id));
-    const uniqueNew = newProducts.filter(p => !existingIds.has(p.id));
-    products = [...products, ...uniqueNew];
-    hasMoreFromFirestore = hasMore;
-    visibleCount = products.length;
-    render();
-  };
-
-  window.updateHasMore = function(hasMore){
-    hasMoreFromFirestore = hasMore;
-    render();
-  };
-
-  const CAT_COLORS = {
-    'SAREE':['#7A1E3C','#D4A657'], 'KURTI':['#1F5C52','#6FBFAE'], 'SINGLE KURTI':['#1F5C52','#6FBFAE'],
-    'LEHENGA':['#8E2A5B','#E8B4C4'], '3 PIECE':['#7A4A1E','#E8873A'], '2 PIECE':['#7A4A1E','#E8873A'],
-    'DUPATTA':['#4A2E6E','#B48CD9'], 'BLOUSE':['#6E1F1F','#C9622F']
-  };
-  function getColors(cat){ return CAT_COLORS[cat] || ['#4A4A52','#7A7A85']; }
-
-  let activeCategory = 'All';
-  let searchQuery = '';
-  let sortBy = 'relevance';
-
-  function parseQuery(q){
-    q = q.toLowerCase().trim();
-    let minPrice = null, maxPrice = null;
-    const between = q.match(/between\s*(\d+)\s*(?:and|to|-)\s*(\d+)/);
-    const under = q.match(/(?:under|below|se kam)\s*(\d+)/);
-    const above = q.match(/(?:above|over|se zyada|se jyada)\s*(\d+)/);
-    if(between){ minPrice = parseInt(between[1]); maxPrice = parseInt(between[2]); }
-    if(under){ maxPrice = parseInt(under[1]); }
-    if(above){ minPrice = parseInt(above[1]); }
-    let text = q
-      .replace(/between\s*\d+\s*(?:and|to|-)\s*\d+/, '')
-      .replace(/(?:under|below|se kam)\s*\d+/, '')
-      .replace(/(?:above|over|se zyada|se jyada)\s*\d+/, '')
-      .replace(/rs\.?|rupees|₹/g, '').trim();
-    return { text, minPrice, maxPrice };
-  }
-
-  function getFiltered(){
-    const { text, minPrice, maxPrice } = parseQuery(searchQuery);
-    let list = products.filter(p=>{
-      if(activeCategory !== 'All' && p.category !== activeCategory) return false;
-      if(minPrice != null && p.price < minPrice) return false;
-      if(maxPrice != null && p.price > maxPrice) return false;
-      if(text){
-        const hay = (p.name + ' ' + p.category).toLowerCase();
-        const words = text.split(/\s+/).filter(Boolean);
-        for(const w of words){ if(!hay.includes(w)) return false; }
-      }
-      return true;
-    });
-    if(sortBy === 'priceLow') list = list.slice().sort((a,b)=>a.price-b.price);
-    if(sortBy === 'priceHigh') list = list.slice().sort((a,b)=>b.price-a.price);
-    return list;
-  }
-
-  async function shareProducts(list){
-    const withImages = list.filter(p=>p.image);
-    let files = [];
-    if(withImages.length){
-      try{
-        files = await Promise.all(withImages.slice(0,10).map(async p=>{
-          const res = await fetch(p.image);
-          const blob = await res.blob();
-          const ext = blob.type.split('/')[1] || 'jpg';
-          return new File([blob], `${p.name}.${ext}`, { type: blob.type });
-        }));
-      }catch(err){ 
-        console.error("Fetch error:", err);
-        files = []; 
-      }
-    }
-    const names = list.map(p=>p.name).join(', ');
-    try{
-      if(files.length && navigator.canShare && navigator.canShare({ files })){
-        await navigator.share({ files });
-        return;
-      }
-      if(navigator.share){
-        await navigator.share({ text: names });
-        return;
-      }
-    }catch(err){ /* user cancelled */ }
-    window.open(`https://wa.me/?text=${encodeURIComponent(names)}`, '_blank');
-  }
-  window.shareProducts = shareProducts;
-
-  function getImageDetails(url){
-    return new Promise((resolve, reject) => {
-      fetch(url)
-        .then(res => res.blob())
-        .then(blob => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const dataUrl = reader.result;
-            const img = new Image();
-            img.onload = () => resolve({ dataUrl, width: img.width, height: img.height, type: blob.type.includes('png') ? 'PNG' : 'JPEG' });
-            img.onerror = reject;
-            img.src = dataUrl;
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        })
-        .catch(reject);
-    });
-  }
-
-  function drawPlaceholder(doc, x, y, w, h, category){
-    const [g1] = getColors(category);
-    doc.setFillColor(g1);
-    doc.roundedRect(x, y, w, h, 3, 3, 'F');
-    doc.setFont('helvetica','italic');
-    doc.setFontSize(13);
-    doc.setTextColor('#FFFFFF');
-    doc.text(category, x+w/2, y+h/2, { align:'center' });
-  }
-
-  async function generateCatalogPDF(list){
-    const { jsPDF } = window.jspdf;
-    let doc = null;
-
-    for(let i=0; i<list.length; i++){
-      const p = list[i];
-
-      if(p.image){
-        try{
-          const img = await getImageDetails(p.image);
-          
-          const isLandscape = img.width > img.height;
-          const pageW = isLandscape ? 130 : 100;
-          const pageH = pageW * (img.height / img.width);
-          const orientation = isLandscape ? 'landscape' : 'portrait';
-
-          if(!doc) {
-            doc = new jsPDF({ orientation: orientation, unit:'mm', format:[pageW, pageH] });
-          } else {
-            doc.addPage([pageW, pageH], orientation);
-          }
-          
-          doc.addImage(img.dataUrl, img.type, 0, 0, pageW, pageH, undefined, 'FAST');
-          continue;
-        }catch(e){ /* fallback */ }
-      }
-
-      const pageW = 100, pageH = 130;
-      if(!doc) doc = new jsPDF({ unit:'mm', format:[pageW, pageH] });
-      else doc.addPage([pageW, pageH]);
-      drawPlaceholder(doc, 8, 8, pageW-16, pageH-50, p.category);
-      doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor('#222222');
-      doc.text(p.name, 8, pageH-32, { maxWidth: pageW-16 });
-      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor('#999999');
-      doc.text(p.category, 8, pageH-24);
-      doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor('#B5862F');
-      doc.text('Rs. ' + p.price.toLocaleString('en-IN'), 8, pageH-12);
-    }
-    return doc.output('blob');
-  }
-
-  async function sendAsPDF(list){
-    if(!list.length) return;
-    const btn = document.getElementById('sendPdfBtn');
-    const label = document.getElementById('pdfBtnLabel');
-    btn.disabled = true; label.textContent = 'PDF ban raha hai...';
-    try{
-      const blob = await generateCatalogPDF(list);
-      const stamp = new Date().toISOString().replace(/[-:T]/g,'').slice(0,14);
-      const filename = `rangrezz-catalog-${stamp}.pdf`;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-      label.textContent = '✓ Download ho gaya';
-    }catch(err){
-      alert('PDF banane mein dikkat aayi, dobara try karein.');
-      console.error(err);
-      label.textContent = 'PDF banake bhejo';
-    }
-    btn.disabled = false;
-    setTimeout(()=>{ label.textContent = 'PDF banake bhejo'; }, 2500);
-  }
-
-  function toggleSelect(id){
-    if(selected.has(id)) selected.delete(id); else selected.add(id);
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if(card){
-      card.classList.toggle('selected', selected.has(id));
-      card.querySelector('.select-box').classList.toggle('checked', selected.has(id));
-    }
-    renderSelectionBar();
-  }
-  window.toggleSelect = toggleSelect;
-
-  function renderSelectionBar(){
-    const bar = document.getElementById('selectionBar');
-    if(selected.size === 0){ bar.classList.remove('show'); return; }
-    bar.classList.add('show');
-    document.getElementById('selCount').textContent = `${selected.size} item${selected.size>1?'s':''} selected`;
-  }
-
-  function renderChips(){
-    const wrap = document.getElementById('catChips');
-    if(products.length === 0) return;
-    const cats = ['All', ...new Set(products.map(p=>p.category))];
-    wrap.innerHTML = cats.map(c=>
-      `<button class="cat-chip ${c===activeCategory?'active':''}" data-cat="${c}">${c}</button>`
-    ).join('');
-    wrap.querySelectorAll('.cat-chip').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        activeCategory = btn.dataset.cat;
-        visibleCount = PAGE_SIZE;
-        render();
-      });
-    });
-  }
-
-  function cardHTML(p){
-    const [g1,g2] = getColors(p.category);
-    const imageInner = p.image
-      ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">`
-      : `<span>${p.category}</span>`;
-    const isSel = selected.has(p.id);
-    return `
-      <div class="card ${isSel?'selected':''}" data-id="${p.id}">
-        <div class="swatch" style="--g1:${g1};--g2:${g2}" onclick="toggleSelect('${p.id}')">
-          <div class="select-box ${isSel?'checked':''}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1B0E14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          </div>
-          ${imageInner}
+  <!-- VIEW 1: UPLOAD PHOTOS -->
+  <div id="uploadSection" class="view-section active">
+    <div class="panel">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Category</label>
+          <select id="categorySelect">
+            <option value="BLOUSE">BLOUSE</option>
+            <option value="SAREE">SAREE</option>
+            <option value="KURTI">KURTI</option>
+            <option value="SINGLE KURTI">SINGLE KURTI</option>
+            <option value="3 PIECE">3 PIECE</option>
+            <option value="2 PIECE">2 PIECE</option>
+            <option value="LEHENGA">LEHENGA</option>
+            <option value="GOWN">GOWN</option>
+          </select>
         </div>
-        <div class="card-body">
-          <div class="cat-tag">${p.category}</div>
-          <div class="card-name">${p.name}</div>
-          <div class="card-price">₹${p.price.toLocaleString('en-IN')}</div>
-          <button class="wa-btn" onclick="shareProducts([products.find(x=>x.id==='${p.id}')])">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.9.53 3.68 1.44 5.2L2 22l4.94-1.4A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.06.87.85-2.98-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
-            Send on WhatsApp
-          </button>
+        <div class="form-group">
+          <label>Default Price (Optional ₹)</label>
+          <input type="number" id="defaultPrice" placeholder="e.g. 250" oninput="applyDefaultPrice()">
         </div>
-      </div>`;
-  }
+      </div>
 
-  function toggleSelectAll(){
-    const filtered = getFiltered();
-    const allSelected = filtered.length > 0 && filtered.every(p=>selected.has(p.id));
-    if(allSelected){
-      filtered.forEach(p=>selected.delete(p.id));
-    } else {
-      filtered.forEach(p=>selected.add(p.id));
-    }
-    render();
-  }
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+        <span class="dropzone-icon">📸</span>
+        <p>Drag & Drop Photos Here or Click to Choose</p>
+        <span>Original High Resolution (No Image Compression)</span>
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+      </div>
 
-  function render(){
-    renderChips();
-    const filtered = getFiltered();
-    const grid = document.getElementById('grid');
-    const empty = document.getElementById('emptyState');
-    const countText = document.getElementById('countText');
-    const selectAllBtn = document.getElementById('selectAllBtn');
-    const loadMoreWrap = document.getElementById('loadMoreWrap');
+      <div class="grid-container" id="previewGrid"></div>
 
-    countText.textContent = `${filtered.length} item${filtered.length!==1?'s':''} mile`;
-    const allSelected = filtered.length > 0 && filtered.every(p=>selected.has(p.id));
-    selectAllBtn.textContent = allSelected ? 'Deselect All' : 'Select All';
-    selectAllBtn.style.display = filtered.length ? 'inline-block' : 'none';
+      <button class="primary-btn" id="uploadBtn" style="display:none" onclick="startBulkUpload()">Upload Selected Images</button>
+      <div id="statusMsg"></div>
+    </div>
+  </div>
 
-    if(filtered.length === 0){
-      grid.innerHTML = '';
-      empty.style.display = 'block';
-      empty.innerHTML = productsLoaded
-        ? '<strong>Koi item nahi mila</strong>Price range badha ke ya category badal ke dekhein.'
-        : '<strong>Catalog load ho raha hai…</strong>Ek pal ruko.';
-      loadMoreWrap.style.display = 'none';
-      return;
-    }
-    empty.style.display = 'none';
-    const visible = filtered.slice(0, visibleCount);
-    grid.innerHTML = visible.map(cardHTML).join('');
+  <!-- VIEW 2: MANAGE & DELETE CATALOG -->
+  <div id="manageSection" class="view-section">
+    <div class="panel">
+      <div class="manage-toolbar">
+        <div class="action-group">
+          <button class="btn-pill" id="selectAllBtn" onclick="toggleSelectAllDelete()">Select All</button>
+          <button class="btn-pill btn-pill-gold" onclick="loadExistingProducts()">Refresh</button>
+        </div>
+        <div class="counter-badge" id="totalCountText">0 items loaded</div>
+      </div>
 
-    const canShowMoreLocal = visibleCount < filtered.length;
-    loadMoreWrap.style.display = (canShowMoreLocal || hasMoreFromFirestore) ? 'block' : 'none';
-    renderSelectionBar();
-  }
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="manageSearchInput" placeholder="Search by name, category, or price..." oninput="filterAndRenderExisting()">
+      </div>
 
-  document.getElementById('searchInput').addEventListener('input', (e)=>{
-    searchQuery = e.target.value; visibleCount = PAGE_SIZE; render();
-  });
-  document.getElementById('sortBy').addEventListener('change', (e)=>{ sortBy = e.target.value; render(); });
+      <div class="grid-container" id="existingGrid">Loading items...</div>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <button id="loadMoreAdminBtn" class="btn-pill btn-pill-gold" style="display: none; padding: 12px 30px; font-size: 14px;" onclick="loadMoreExistingProducts()">Load More Items</button>
+      </div>
+    </div>
+  </div>
 
-  document.getElementById('loadMoreBtn').addEventListener('click', ()=>{
-    const filtered = getFiltered();
-    if(visibleCount < filtered.length){
-      visibleCount += PAGE_SIZE;
-      render();
-    } else if(window.loadMoreFromFirestore){
-      window.loadMoreFromFirestore();
-    }
-  });
+</div>
 
-  document.getElementById('selectAllBtn').addEventListener('click', toggleSelectAll);
-  document.querySelectorAll('.try-chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      searchQuery = chip.dataset.q;
-      document.getElementById('searchInput').value = searchQuery;
-      visibleCount = PAGE_SIZE; render();
-    });
-  });
-  document.getElementById('clearSelBtn').addEventListener('click', ()=>{ selected.clear(); render(); });
-  document.getElementById('sendSelectedBtn').addEventListener('click', ()=>{
-    const list = products.filter(p=>selected.has(p.id));
-    if(list.length) shareProducts(list);
-  });
-  document.getElementById('sendPdfBtn').addEventListener('click', ()=>{
-    const list = products.filter(p=>selected.has(p.id));
-    if(list.length) sendAsPDF(list);
-  });
+<!-- Floating Multi-Delete Bar -->
+<div class="batch-bar" id="batchBar">
+  <span class="batch-bar-count" id="batchCount">0 selected</span>
+  <button class="batch-delete-btn" onclick="deleteSelectedProducts()">Delete Selected</button>
+</div>
 
-  render();
-</script>
+<!-- Edit Product Modal -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal-card">
+    <h3>Edit Product</h3>
+    <input type="hidden" id="editId">
+    <div class="form-group" style="margin-bottom: 14px;">
+      <label>Name</label>
+      <input type="text" id="editName" placeholder="Product name">
+    </div>
+    <div class="form-group" style="margin-bottom: 14px;">
+      <label>Price (₹)</label>
+      <input type="number" id="editPrice" placeholder="Price">
+    </div>
+    <div class="form-group" style="margin-bottom: 18px;">
+      <label>Category</label>
+      <select id="editCategory">
+        <option value="BLOUSE">BLOUSE</option>
+        <option value="SAREE">SAREE</option>
+        <option value="KURTI">KURTI</option>
+        <option value="SINGLE KURTI">SINGLE KURTI</option>
+        <option value="3 PIECE">3 PIECE</option>
+        <option value="2 PIECE">2 PIECE</option>
+        <option value="LEHENGA">LEHENGA</option>
+        <option value="GOWN">GOWN</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-pill" style="flex:1" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-pill btn-pill-gold" style="flex:1" id="editSaveBtn" onclick="saveEditProduct()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, query, orderBy, limit, startAfter, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  function escapeHtml(val) {
+    if (val === undefined || val === null) return '';
+    return String(val)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* 🔑 SECRET PIN LOCK LOGIC */
+  const ADMIN_PIN = "7860";
+
+  window.checkPin = function() {
+    const inputPin = document.getElementById('pinInput').value;
+    const errDiv = document.getElementById('pinError');
+
+    if (inputPin === ADMIN_PIN) {
+      document.getElementById('lockScreen').style.display = 'none';
+      sessionStorage.setItem('adminUnlocked', 'true');
+    } else {
+      errDiv.textContent = "❌ Galat PIN! Dobara try karein.";
+    }
+  };
+
+  document.getElementById('pinInput')?.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') checkPin();
+  });
+
+  if (sessionStorage.getItem('adminUnlocked') === 'true') {
+    document.getElementById('lockScreen').style.display = 'none';
+  }
 
   const firebaseConfig = {
     apiKey: "AIzaSyBKdlUqXFF2rK0yZChhuzQRgfL_Tan4wRM",
@@ -526,86 +718,384 @@
     appId: "1:490614934526:web:bdd039027821b363928eaf"
   };
 
+  const IMGBB_API_KEY = "b7d9a58aed38c1614607cb42b26c2487";
+
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  let lastDoc = null;
-  let isLoading = false;
-  const FETCH_LIMIT = 50;
+  let selectedFiles = [];
+  let allUploadedProducts = [];
+  let selectedDeleteIds = new Set();
+  
+  /* PAGINATION VARS */
+  let lastVisibleDoc = null;
+  let hasMoreProducts = true;
+  let isFetching = false;
+  const BATCH_SIZE = 20;
 
-  // 1. Initial Load (First 50 Items)
-  async function loadInitialProducts() {
-    try {
-      const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(FETCH_LIMIT));
-      const snapshot = await getDocs(q);
-      
-      if (!snapshot.empty) {
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        const products = snapshot.docs.map(docSnap => {
-          const d = docSnap.data();
-          return {
-            id: docSnap.id,
-            name: d.name || '',
-            category: d.category || '',
-            price: d.price || 0,
-            image: d.image || ''
-          };
-        });
-        const hasMore = snapshot.docs.length === FETCH_LIMIT;
-        window.setProducts(products, hasMore);
-      } else {
-        window.setProducts([], false);
-      }
-    } catch (error) {
-      console.error("Firestore Error:", error);
-      window.setProducts([], false);
-    }
-  }
+  /* TAB SWITCHING */
+  window.switchTab = function(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
 
-  // 2. Pagination Load (Next 50 Items on Load More Click)
-  window.loadMoreFromFirestore = async function() {
-    if (isLoading || !lastDoc) return;
-    isLoading = true;
-
-    const btn = document.getElementById('loadMoreBtn');
-    if (btn) btn.textContent = 'Loading...';
-
-    try {
-      const q = query(
-        collection(db, "products"),
-        orderBy("createdAt", "desc"),
-        startAfter(lastDoc),
-        limit(FETCH_LIMIT)
-      );
-      const snapshot = await getDocs(q);
-
-      if (!snapshot.empty) {
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        const newProducts = snapshot.docs.map(docSnap => {
-          const d = docSnap.data();
-          return {
-            id: docSnap.id,
-            name: d.name || '',
-            category: d.category || '',
-            price: d.price || 0,
-            image: d.image || ''
-          };
-        });
-        const hasMore = snapshot.docs.length === FETCH_LIMIT;
-        window.appendProducts(newProducts, hasMore);
-      } else {
-        window.updateHasMore(false);
-      }
-    } catch (error) {
-      console.error("Load More Error:", error);
-    } finally {
-      isLoading = false;
-      if (btn) btn.textContent = 'Load more';
+    if (tab === 'upload') {
+      document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      document.getElementById('uploadSection').classList.add('active');
+      document.getElementById('batchBar').classList.remove('show');
+    } else {
+      document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      document.getElementById('manageSection').classList.add('active');
+      if(allUploadedProducts.length === 0) loadExistingProducts();
     }
   };
 
-  // Start initial fetch
-  loadInitialProducts();
+  /* UPLOAD DRAG & DROP LOGIC */
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const previewGrid = document.getElementById('previewGrid');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const statusMsg = document.getElementById('statusMsg');
+
+  ['dragenter', 'dragover'].forEach(eName => {
+    dropzone.addEventListener(eName, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(eName => {
+    dropzone.addEventListener(eName, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+  });
+
+  dropzone.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+  fileInput.addEventListener('change', (e) => { handleFiles(e.target.files); fileInput.value = ''; });
+
+  function handleFiles(files) {
+    const defPrice = document.getElementById('defaultPrice').value || '';
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const cleanName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      selectedFiles.push({ file, name: cleanName, price: defPrice, status: 'pending' });
+    });
+    renderPreviews();
+  }
+
+  window.applyDefaultPrice = function () {
+    const p = document.getElementById('defaultPrice').value;
+    selectedFiles.forEach(item => { if (item.status !== 'done') item.price = p; });
+    renderPreviews();
+  };
+
+  function renderPreviews() {
+    previewGrid.innerHTML = '';
+    if (selectedFiles.length === 0) { uploadBtn.style.display = 'none'; return; }
+    uploadBtn.style.display = 'block';
+
+    selectedFiles.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card-item' + (item.status === 'failed' ? ' card-failed' : '');
+      const imgUrl = URL.createObjectURL(item.file);
+      card.innerHTML = `
+        <button class="remove-pill-btn" onclick="removeItem(${index})">×</button>
+        ${item.status === 'failed' ? '<div class="fail-badge">⚠️ Upload fail</div>' : ''}
+        <div class="card-media">
+          <img src="${imgUrl}">
+        </div>
+        <div class="upload-inputs">
+          <input type="text" value="${escapeHtml(item.name)}" placeholder="Name" onchange="updateName(${index}, this.value)">
+          <input type="number" value="${escapeHtml(item.price)}" placeholder="Price (₹)" onchange="updatePrice(${index}, this.value)">
+        </div>
+      `;
+      previewGrid.appendChild(card);
+    });
+  }
+
+  window.removeItem = function (idx) { selectedFiles.splice(idx, 1); renderPreviews(); };
+  window.updateName = function (idx, val) { selectedFiles[idx].name = val; };
+  window.updatePrice = function (idx, val) { selectedFiles[idx].price = val; };
+
+  window.startBulkUpload = async function () {
+    const category = document.getElementById('categorySelect').value;
+    const pending = selectedFiles.filter(f => f.status !== 'done');
+    
+    if (pending.some(f => !f.price || !f.name)) {
+      alert("Sabhi photos ka Name aur Price bharna zaroori hai!");
+      return;
+    }
+
+    uploadBtn.disabled = true;
+    let done = 0;
+    let failedCount = 0;
+    const MAX_SIZE = 32 * 1024 * 1024;
+
+    for (const item of pending) {
+      statusMsg.textContent = `⚡ Uploading (${done + 1}/${pending.length}): ${item.name}...`;
+      try {
+        if (item.file.size > MAX_SIZE) {
+          throw new Error('File 32MB se bada hai, imgbb accept nahi karega');
+        }
+
+        const formData = new FormData();
+        const ext = item.file.name.includes('.') ? item.file.name.split('.').pop() : 'jpg';
+        formData.append("image", item.file, `${item.name}.${ext}`);
+
+        const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          method: "POST",
+          body: formData
+        }).then(res => res.json());
+
+        if (imgbbRes.success) {
+          await addDoc(collection(db, "products"), {
+            name: item.name,
+            category: category,
+            price: parseInt(item.price) || 0,
+            image: imgbbRes.data.display_url || imgbbRes.data.url,
+            createdAt: new Date().toISOString()
+          });
+          item.status = 'done';
+        } else {
+          throw new Error(imgbbRes.error?.message || 'imgbb upload failed');
+        }
+      } catch (err) {
+        console.error(err);
+        item.status = 'failed';
+        failedCount++;
+      }
+      done++;
+    }
+
+    selectedFiles = selectedFiles.filter(f => f.status !== 'done');
+
+    if (failedCount > 0) {
+      statusMsg.textContent = `⚠️ ${done - failedCount}/${done} upload hui, ${failedCount} fail ho gayi — marked photos dobara try karein.`;
+    } else {
+      statusMsg.textContent = `✅ Sabhi photos upload ho gayi!`;
+    }
+    renderPreviews();
+    uploadBtn.disabled = false;
+  };
+
+  /* SAFE BATCHED FETCH LOGIC */
+  window.loadExistingProducts = async function () {
+    const grid = document.getElementById('existingGrid');
+    const loadBtn = document.getElementById('loadMoreAdminBtn');
+    grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:var(--ivory-dim); padding: 40px;'>Loading inventory...</p>";
+    selectedDeleteIds.clear();
+    updateBatchBar();
+    allUploadedProducts = [];
+    lastVisibleDoc = null;
+    hasMoreProducts = true;
+
+    try {
+      const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(BATCH_SIZE));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        hasMoreProducts = false;
+      } else {
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        if (snapshot.docs.length < BATCH_SIZE) hasMoreProducts = false;
+
+        snapshot.forEach((docSnap) => {
+          allUploadedProducts.push({ id: docSnap.id, ...docSnap.data() });
+        });
+      }
+
+      document.getElementById('totalCountText').textContent = `${allUploadedProducts.length} items loaded`;
+      loadBtn.style.display = hasMoreProducts ? 'inline-block' : 'none';
+      filterAndRenderExisting();
+    } catch(err) {
+      console.error(err);
+      grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:var(--danger); padding: 40px;'>Error loading catalog.</p>";
+    }
+  };
+
+  window.loadMoreExistingProducts = async function () {
+    if (!hasMoreProducts || isFetching || !lastVisibleDoc) return;
+    isFetching = true;
+    const loadBtn = document.getElementById('loadMoreAdminBtn');
+    loadBtn.textContent = "Loading...";
+
+    try {
+      const q = query(collection(db, "products"), orderBy("createdAt", "desc"), startAfter(lastVisibleDoc), limit(BATCH_SIZE));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        hasMoreProducts = false;
+      } else {
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+        if (snapshot.docs.length < BATCH_SIZE) hasMoreProducts = false;
+
+        snapshot.forEach((docSnap) => {
+          allUploadedProducts.push({ id: docSnap.id, ...docSnap.data() });
+        });
+      }
+
+      document.getElementById('totalCountText').textContent = `${allUploadedProducts.length} items loaded`;
+      filterAndRenderExisting();
+    } catch (err) {
+      console.error("Load More error:", err);
+    } finally {
+      isFetching = false;
+      loadBtn.textContent = "Load More Items";
+      loadBtn.style.display = hasMoreProducts ? 'inline-block' : 'none';
+    }
+  };
+
+  window.filterAndRenderExisting = function() {
+    const grid = document.getElementById('existingGrid');
+    const searchVal = (document.getElementById('manageSearchInput')?.value || '').toLowerCase().trim();
+
+    const filtered = allUploadedProducts.filter(item => {
+      const matchName = (item.name || '').toLowerCase().includes(searchVal);
+      const matchCat = (item.category || '').toLowerCase().includes(searchVal);
+      const matchPrice = (item.price !== undefined && item.price !== null) ? item.price.toString().includes(searchVal) : false;
+      return matchName || matchCat || matchPrice;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:var(--ivory-dim); padding: 40px;'>Koi product nahi mila.</p>";
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => {
+      const isSel = selectedDeleteIds.has(item.id);
+      return `
+        <div class="card-item delete-card ${isSel ? 'selected' : ''}" onclick="toggleDeleteSelect('${item.id}')">
+          <div class="card-media">
+            <div class="checkbox-overlay">
+              <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <button class="edit-pill-btn" onclick="event.stopPropagation(); openEditModal('${item.id}')">Edit</button>
+            <img src="${escapeHtml(item.image)}" loading="lazy" alt="${escapeHtml(item.name)}">
+          </div>
+          <div class="card-body">
+            <div class="card-category">${escapeHtml(item.category)}</div>
+            <div class="card-title">${escapeHtml(item.name)}</div>
+            <div class="card-price">₹${escapeHtml(item.price)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    updateSelectAllButtonText(filtered);
+  };
+
+  window.toggleDeleteSelect = function(id) {
+    if (selectedDeleteIds.has(id)) selectedDeleteIds.delete(id);
+    else selectedDeleteIds.add(id);
+
+    filterAndRenderExisting();
+    updateBatchBar();
+  };
+
+  window.toggleSelectAllDelete = function() {
+    const searchVal = (document.getElementById('manageSearchInput')?.value || '').toLowerCase().trim();
+    const currentFiltered = allUploadedProducts.filter(item => {
+      const matchName = (item.name || '').toLowerCase().includes(searchVal);
+      const matchCat = (item.category || '').toLowerCase().includes(searchVal);
+      const matchPrice = (item.price !== undefined && item.price !== null) ? item.price.toString().includes(searchVal) : false;
+      return matchName || matchCat || matchPrice;
+    });
+
+    const allSelected = currentFiltered.length > 0 && currentFiltered.every(item => selectedDeleteIds.has(item.id));
+
+    if (allSelected) {
+      currentFiltered.forEach(item => selectedDeleteIds.delete(item.id));
+    } else {
+      currentFiltered.forEach(item => selectedDeleteIds.add(item.id));
+    }
+
+    filterAndRenderExisting();
+    updateBatchBar();
+  };
+
+  function updateSelectAllButtonText(currentFiltered) {
+    const btn = document.getElementById('selectAllBtn');
+    if (!btn) return;
+    const allSelected = currentFiltered.length > 0 && currentFiltered.every(item => selectedDeleteIds.has(item.id));
+    btn.textContent = allSelected ? 'Deselect All' : 'Select All';
+  }
+
+  function updateBatchBar() {
+    const bar = document.getElementById('batchBar');
+    const count = document.getElementById('batchCount');
+    if (selectedDeleteIds.size > 0) {
+      count.textContent = `${selectedDeleteIds.size} item${selectedDeleteIds.size > 1 ? 's' : ''} selected`;
+      bar.classList.add('show');
+    } else {
+      bar.classList.remove('show');
+    }
+  }
+
+  /* EDIT PRODUCT */
+  window.openEditModal = function (id) {
+    const item = allUploadedProducts.find(p => p.id === id);
+    if (!item) return;
+    document.getElementById('editId').value = id;
+    document.getElementById('editName').value = item.name || '';
+    document.getElementById('editPrice').value = item.price || '';
+    document.getElementById('editCategory').value = item.category || 'BLOUSE';
+    document.getElementById('editModalOverlay').style.display = 'flex';
+  };
+
+  window.closeEditModal = function () {
+    document.getElementById('editModalOverlay').style.display = 'none';
+  };
+
+  window.saveEditProduct = async function () {
+    const id = document.getElementById('editId').value;
+    const name = document.getElementById('editName').value.trim();
+    const price = document.getElementById('editPrice').value;
+    const category = document.getElementById('editCategory').value;
+
+    if (!name || !price) {
+      alert("Name aur Price bharna zaroori hai!");
+      return;
+    }
+
+    const saveBtn = document.getElementById('editSaveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    try {
+      const updatedFields = { name, price: parseInt(price) || 0, category };
+      await updateDoc(doc(db, "products", id), updatedFields);
+
+      const idx = allUploadedProducts.findIndex(p => p.id === id);
+      if (idx !== -1) allUploadedProducts[idx] = { ...allUploadedProducts[idx], ...updatedFields };
+
+      closeEditModal();
+      filterAndRenderExisting();
+    } catch (err) {
+      console.error("Edit error:", err);
+      alert("Update fail ho gaya, dobara try karein.");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+    }
+  };
+
+  /* SAFE MULTI-DELETE WITH FIREBASE BATCH */
+  window.deleteSelectedProducts = async function () {
+    if (selectedDeleteIds.size === 0) return;
+
+    const idsToDelete = Array.from(selectedDeleteIds);
+
+    allUploadedProducts = allUploadedProducts.filter(p => !selectedDeleteIds.has(p.id));
+    selectedDeleteIds.clear();
+    updateBatchBar();
+    filterAndRenderExisting();
+    document.getElementById('totalCountText').textContent = `${allUploadedProducts.length} items loaded`;
+
+    try {
+      const batch = writeBatch(db);
+      idsToDelete.forEach(id => {
+        batch.delete(doc(db, "products", id));
+      });
+      await batch.commit();
+    } catch (err) {
+      console.error("Multi delete error:", err);
+      loadExistingProducts();
+    }
+  };
 </script>
+
 </body>
 </html>
