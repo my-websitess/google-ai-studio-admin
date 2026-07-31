@@ -451,6 +451,27 @@
       justify-content: center;
     }
 
+    .restore-pill-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      background: rgba(37, 211, 102, 0.9);
+      color: #0E070B;
+      border: none;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Manrope', sans-serif;
+      backdrop-filter: blur(4px);
+    }
+    .restore-pill-btn:hover {
+      background: var(--whatsapp);
+      transform: scale(1.05);
+    }
+
     .trash-badge-tag {
       position: absolute;
       bottom: 10px;
@@ -719,6 +740,64 @@
       border-radius: 6px;
       margin-bottom: 6px;
     }
+
+    /* Non-blocking Toast Notification System */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+    }
+    .toast-card {
+      background: rgba(24, 13, 20, 0.95);
+      border: 1px solid var(--gold);
+      color: var(--ivory);
+      padding: 12px 18px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
+      animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .toast-card.success {
+      border-color: var(--whatsapp);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.25);
+    }
+    .toast-card.error {
+      border-color: var(--danger);
+      box-shadow: 0 8px 25px rgba(232, 85, 85, 0.25);
+    }
+    .toast-card.warning {
+      border-color: var(--gold);
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .toast-card.hide {
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+    }
   </style>
 </head>
 <body>
@@ -922,6 +1001,39 @@
       .replace(/'/g, '&#39;');
   }
 
+  /* 🔔 NON-BLOCKING TOAST NOTIFICATION HELPER */
+  window.showToast = function(message, type = 'info') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-card ${type}`;
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    else if (type === 'error') icon = '❌';
+    else if (type === 'warning') icon = '⚠️';
+
+    toast.innerHTML = `
+      <span style="font-size:16px; flex-shrink:0;">${icon}</span>
+      <span style="flex:1; line-height:1.4;">${escapeHtml(message)}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('hide');
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 3200);
+  };
+
   /* 🔑 SECRET PIN LOCK LOGIC */
   const ADMIN_PIN = "7860";
 
@@ -988,6 +1100,7 @@
     try {
       const snap = await getDocs(collection(db, "categories"));
       if (snap.empty) {
+        // Seed initial categories if empty
         for (const catName of DEFAULT_CATEGORIES) {
           await addDoc(collection(db, "categories"), {
             name: catName,
@@ -1000,12 +1113,14 @@
         categoriesList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       }
 
+      // Sort alphabetically
       categoriesList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
       renderCategoryDropdowns();
       renderCategoryListModal();
     } catch (err) {
       console.error("Error loading categories:", err);
+      // Fallback
       categoriesList = DEFAULT_CATEGORIES.map((name, i) => ({ id: `default_${i}`, name }));
       renderCategoryDropdowns();
     }
@@ -1026,6 +1141,7 @@
   window.handleCategoryDropdownChange = function(selectElem) {
     if (selectElem.value === '__ADD_NEW__') {
       openCategoryModal();
+      // Reset select to first category
       if (categoriesList.length > 0) {
         selectElem.value = categoriesList[0].name;
       }
@@ -1066,12 +1182,12 @@
     const newName = (input.value || '').trim().toUpperCase();
 
     if (!newName) {
-      alert("Category ka naam daalein!");
+      showToast("Category ka naam daalein!", "warning");
       return;
     }
 
     if (categoriesList.some(c => c.name.toUpperCase() === newName)) {
-      alert("Yeh category pehle se maujood hai!");
+      showToast("Yeh category pehle se maujood hai!", "warning");
       return;
     }
 
@@ -1086,9 +1202,10 @@
       input.value = '';
       renderCategoryDropdowns();
       renderCategoryListModal();
+      showToast(`Category "${newName}" add ho gayi!`, "success");
     } catch (err) {
       console.error("Add category error:", err);
-      alert("Category add fail ho gayi, dobara try karein.");
+      showToast("Category add fail ho gayi, dobara try karein.", "error");
     }
   };
 
@@ -1101,10 +1218,12 @@
     const formattedNewName = newName.trim().toUpperCase();
 
     try {
+      // 1. Update category doc
       await updateDoc(doc(db, "categories", catId), {
         name: formattedNewName
       });
 
+      // 2. Update products in Firestore that use old category name
       const q = query(collection(db, "products"), where("category", "==", oldName));
       const snap = await getDocs(q);
       
@@ -1118,6 +1237,7 @@
         await batch.commit();
       }
 
+      // Update local memory list
       const idx = categoriesList.findIndex(c => c.id === catId);
       if (idx !== -1) categoriesList[idx].name = formattedNewName;
 
@@ -1129,10 +1249,10 @@
       renderCategoryListModal();
       filterAndRenderExisting();
 
-      alert(`Category "${oldName}" ko "${formattedNewName}" me rename kar diya gaya hai (${snap.size} products updated).`);
+      showToast(`Category "${oldName}" ko "${formattedNewName}" me rename kar diya gaya hai!`, "success");
     } catch (err) {
       console.error("Rename category error:", err);
-      alert("Rename fail ho gaya.");
+      showToast("Rename fail ho gaya.", "error");
     }
   };
 
@@ -1145,11 +1265,13 @@
 
       renderCategoryDropdowns();
       renderCategoryListModal();
+      showToast(`Category "${name}" delete ho gayi.`, "success");
     } catch (err) {
       console.error("Delete category error:", err);
-      alert("Delete fail ho gaya.");
+      showToast("Delete fail ho gaya.", "error");
     }
   };
+
 
   /* TAB SWITCHING */
   window.switchTab = function(tab) {
@@ -1292,12 +1414,12 @@
     const pending = selectedFiles.filter(f => f.status !== 'done');
     
     if (!category || category === '__ADD_NEW__') {
-      alert("Kripya ek valid category choose karein!");
+      showToast("Kripya ek valid category choose karein!", "warning");
       return;
     }
 
     if (pending.some(f => !f.price || !f.name)) {
-      alert("Sabhi photos ka Name aur Price bharna zaroori hai!");
+      showToast("Sabhi photos ka Name aur Price bharna zaroori hai!", "warning");
       return;
     }
 
@@ -1442,7 +1564,7 @@
     const searchVal = (document.getElementById('manageSearchInput')?.value || '').toLowerCase().trim();
 
     const filtered = allUploadedProducts.filter(item => {
-      if (item.isDeleted === true) return false;
+      if (item.isDeleted === true) return false; // Safety check
       const matchName = (item.name || '').toLowerCase().includes(searchVal);
       const matchCat = (item.category || '').toLowerCase().includes(searchVal);
       const matchPrice = (item.price !== undefined && item.price !== null) ? item.price.toString().includes(searchVal) : false;
@@ -1684,10 +1806,11 @@
       await batch.commit();
 
       loadTrashCountBadge();
-      alert(`${idsToDelete.length} items Recycle Bin me move ho gaye hain!`);
+      showToast(`${idsToDelete.length} items Recycle Bin me move ho gaye hain!`, "success");
     } catch (err) {
       console.error("Soft delete error:", err);
       loadExistingProducts();
+      showToast("Move to Recycle Bin fail ho gaya.", "error");
     }
   };
 
@@ -1706,9 +1829,10 @@
 
       filterAndRenderTrash();
       updateTrashBatchBar();
+      showToast("Item live catalog me restore ho gaya!", "success");
     } catch (err) {
       console.error("Restore error:", err);
-      alert("Restore fail ho gaya.");
+      showToast("Restore fail ho gaya.", "error");
     }
   };
 
@@ -1735,10 +1859,10 @@
       filterAndRenderTrash();
       updateTrashBatchBar();
 
-      alert(`${idsToRestore.length} items live catalog me restore kar diye gaye hain!`);
+      showToast(`${idsToRestore.length} items live catalog me restore kar diye gaye hain!`, "success");
     } catch (err) {
       console.error("Restore batch error:", err);
-      alert("Restore fail ho gaya.");
+      showToast("Restore fail ho gaya.", "error");
     }
   };
 
@@ -1756,9 +1880,10 @@
 
       filterAndRenderTrash();
       updateTrashBatchBar();
+      showToast("Item permanently delete ho gaya.", "success");
     } catch (err) {
       console.error("Permanent delete error:", err);
-      alert("Permanent delete fail ho gaya.");
+      showToast("Permanent delete fail ho gaya.", "error");
     }
   };
 
@@ -1784,12 +1909,13 @@
       filterAndRenderTrash();
       updateTrashBatchBar();
 
-      alert(`${idsToHardDelete.length} items permanently delete kar diye gaye hain!`);
+      showToast(`${idsToHardDelete.length} items permanently delete kar diye gaye hain!`, "success");
     } catch (err) {
       console.error("Permanent batch delete error:", err);
-      alert("Permanent delete fail ho gaya.");
+      showToast("Permanent delete fail ho gaya.", "error");
     }
   };
+
 
   /* EDIT PRODUCT MODAL */
   window.openEditModal = function (id) {
@@ -1818,7 +1944,7 @@
     const category = document.getElementById('editCategory').value;
 
     if (!name || !price) {
-      alert("Name aur Price bharna zaroori hai!");
+      showToast("Name aur Price bharna zaroori hai!", "warning");
       return;
     }
 
@@ -1835,9 +1961,10 @@
 
       closeEditModal();
       filterAndRenderExisting();
+      showToast("Product details save ho gaye!", "success");
     } catch (err) {
       console.error("Edit error:", err);
-      alert("Update fail ho gaya, dobara try karein.");
+      showToast("Update fail ho gaya, dobara try karein.", "error");
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = 'Save Changes';
