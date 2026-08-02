@@ -789,7 +789,7 @@
     <p class="brand-subtitle">Catalog Upload, Dynamic Categories & Recycle Bin System</p>
   </div>
 
-  <!-- UPDATED NAV TABS FOR MOBILE 2x2 PAIR GRID -->
+  <!-- NAV TABS -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('upload')">Upload Photos</button>
     <button class="tab-btn" onclick="switchTab('manage')">Manage Catalog</button>
@@ -953,6 +953,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { 
     getFirestore, 
+    enableIndexedDbPersistence, // <-- Added IndexedDB Caching Import
     collection, 
     addDoc, 
     getDocs, 
@@ -1066,6 +1067,15 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+
+  /* ⚡ ENABLE INDEXEDDB OFFLINE PERSISTENCE FOR ADMIN PANEL */
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('IndexedDB failed: Multiple tabs open at once.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('IndexedDB not supported by browser.');
+    }
+  });
 
   let selectedFiles = [];
   let allUploadedProducts = []; 
@@ -1440,7 +1450,6 @@
       }
     };
 
-    // Process in batches of 3 parallel uploads
     const BATCH_PARALLEL = 3;
     for (let i = 0; i < pending.length; i += BATCH_PARALLEL) {
       const chunk = pending.slice(i, i + BATCH_PARALLEL);
