@@ -72,13 +72,13 @@
       justify-content: center;
       background: rgba(24, 13, 20, 0.8);
       border: 1px solid var(--line);
-      padding: 5px;
+      padding: 6px;
       border-radius: 999px;
       max-width: 640px;
       margin: 0 auto 28px;
       backdrop-filter: blur(12px);
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 6px;
     }
     .tab-btn {
       flex: 1;
@@ -268,13 +268,14 @@
       color: var(--ivory-dim);
     }
 
-    /* Search Box */
+    /* SEARCH BOX WITH CROSS CLEAR BUTTON */
     .search-wrap {
       position: relative;
       margin-bottom: 20px;
     }
     .search-wrap input {
       padding-left: 40px;
+      padding-right: 40px;
     }
     .search-icon {
       position: absolute;
@@ -284,6 +285,24 @@
       color: var(--ivory-dim);
       font-size: 16px;
       pointer-events: none;
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ivory-dim);
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      padding: 4px;
+      line-height: 1;
+      user-select: none;
+      border-radius: 50%;
+      transition: color 0.2s;
+    }
+    .search-clear-btn:hover {
+      color: var(--gold);
     }
 
     /* UNIFORM BULLETPROOF CARD GRID SYSTEM */
@@ -302,15 +321,29 @@
       }
     }
 
+    /* MOBILE SPECIFIC FIXES (2x2 TABS GRID) */
     @media (max-width: 580px) {
+      .nav-tabs { 
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        max-width: 100% !important; 
+        border-radius: 18px !important;
+        gap: 6px !important;
+        padding: 6px !important;
+      }
+      .tab-btn { 
+        min-width: 0 !important; 
+        width: 100% !important;
+        padding: 10px 8px !important; 
+        font-size: 12px !important; 
+        border-radius: 12px !important;
+      }
       .grid-container {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
       }
       .panel { padding: 14px; border-radius: 16px; }
       body { padding-left: 10px; padding-right: 10px; }
-      .nav-tabs { max-width: 100%; }
-      .tab-btn { min-width: 100px; padding: 8px 10px; font-size: 12px; }
     }
 
     /* Standardized Product & Upload Cards */
@@ -329,10 +362,7 @@
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Delete/Select Card Specific Interactive Styling */
-    .delete-card {
-      cursor: pointer;
-    }
+    .delete-card { cursor: pointer; }
     .delete-card:hover {
       border-color: rgba(212, 166, 87, 0.4);
       transform: translateY(-2px);
@@ -343,17 +373,13 @@
       background: rgba(232, 85, 85, 0.08);
     }
 
-    /* Trash Card Styling */
-    .trash-card {
-      border-color: rgba(232, 85, 85, 0.3);
-    }
+    .trash-card { border-color: rgba(232, 85, 85, 0.3); }
     .trash-card.selected {
       border-color: var(--whatsapp) !important;
       box-shadow: 0 0 0 2px var(--whatsapp);
       background: rgba(37, 211, 102, 0.08);
     }
 
-    /* Bulletproof Uniform Aspect Ratio Box */
     .card-media {
       width: 100%;
       aspect-ratio: 3 / 4;
@@ -373,7 +399,6 @@
       display: block;
     }
 
-    /* Overlays inside Image Box */
     .checkbox-overlay {
       position: absolute;
       top: 10px;
@@ -451,27 +476,6 @@
       justify-content: center;
     }
 
-    .restore-pill-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 5;
-      background: rgba(37, 211, 102, 0.9);
-      color: #0E070B;
-      border: none;
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      font-family: 'Manrope', sans-serif;
-      backdrop-filter: blur(4px);
-    }
-    .restore-pill-btn:hover {
-      background: var(--whatsapp);
-      transform: scale(1.05);
-    }
-
     .trash-badge-tag {
       position: absolute;
       bottom: 10px;
@@ -487,7 +491,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Strictly Formatted Details Container */
     .card-body {
       padding: 8px 4px 4px;
       display: flex;
@@ -553,7 +556,6 @@
       color: var(--danger);
     }
 
-    /* Upload inputs inside preview card */
     .upload-inputs {
       display: flex;
       flex-direction: column;
@@ -566,7 +568,6 @@
       border-radius: 8px;
     }
 
-    /* Upload Submit Button */
     .primary-btn {
       width: 100%;
       background: var(--whatsapp);
@@ -585,7 +586,6 @@
     .primary-btn:hover { filter: brightness(1.08); }
     .primary-btn:disabled { opacity: 0.5; cursor: wait; box-shadow: none; }
 
-    /* Glassmorphic Floating Delete/Restore Bar */
     .batch-bar {
       position: fixed;
       bottom: 24px;
@@ -629,7 +629,6 @@
       cursor: pointer;
     }
 
-    /* Modal Overlay & Card */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -667,7 +666,6 @@
       margin-top: 18px;
     }
 
-    /* Category List in Category Manager Modal */
     .category-list {
       display: flex;
       flex-direction: column;
@@ -709,14 +707,8 @@
       font-family: 'Manrope', sans-serif;
       transition: all 0.2s ease;
     }
-    .btn-icon:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-    .btn-icon.danger:hover {
-      border-color: var(--danger);
-      color: var(--danger);
-    }
+    .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); }
 
     #statusMsg {
       margin-top: 16px;
@@ -726,10 +718,7 @@
       font-size: 14px;
     }
 
-    /* Failed Card State */
-    .card-failed {
-      border-color: var(--danger) !important;
-    }
+    .card-failed { border-color: var(--danger) !important; }
     .fail-badge {
       background: var(--danger);
       color: #fff;
@@ -741,7 +730,6 @@
       margin-bottom: 6px;
     }
 
-    /* Non-blocking Toast Notification System */
     .toast-container {
       position: fixed;
       top: 20px;
@@ -772,37 +760,20 @@
       animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
-    .toast-card.success {
-      border-color: var(--whatsapp);
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.25);
-    }
-    .toast-card.error {
-      border-color: var(--danger);
-      box-shadow: 0 8px 25px rgba(232, 85, 85, 0.25);
-    }
-    .toast-card.warning {
-      border-color: var(--gold);
-    }
+    .toast-card.success { border-color: var(--whatsapp); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.25); }
+    .toast-card.error { border-color: var(--danger); box-shadow: 0 8px 25px rgba(232, 85, 85, 0.25); }
+    .toast-card.warning { border-color: var(--gold); }
 
     @keyframes toastSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .toast-card.hide {
-      opacity: 0;
-      transform: translateY(-10px) scale(0.95);
-    }
+    .toast-card.hide { opacity: 0; transform: translateY(-10px) scale(0.95); }
   </style>
 </head>
 <body>
 
-<!-- 🔒 SECRET PIN LOCK SCREEN -->
+<!-- SECRET PIN LOCK SCREEN -->
 <div id="lockScreen" style="position: fixed; inset: 0; background: #0E070B; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px;">
   <h2 style="font-family: 'Fraunces', serif; color: #D4A657; font-size: 30px;">🔒 Admin Panel Locked</h2>
   <p style="color: #BDAEA4; font-size: 14px;">Secret PIN enter karke unlock karein</p>
@@ -818,6 +789,7 @@
     <p class="brand-subtitle">Catalog Upload, Dynamic Categories & Recycle Bin System</p>
   </div>
 
+  <!-- UPDATED NAV TABS FOR MOBILE 2x2 PAIR GRID -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('upload')">Upload Photos</button>
     <button class="tab-btn" onclick="switchTab('manage')">Manage Catalog</button>
@@ -867,9 +839,11 @@
         <div class="counter-badge" id="totalCountText">0 items loaded</div>
       </div>
 
+      <!-- SEARCH BOX WITH CROSS (✕) BUTTON -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="manageSearchInput" placeholder="Search by name, category, or price..." oninput="filterAndRenderExisting()">
+        <input type="text" id="manageSearchInput" placeholder="Search by name, category, or price..." oninput="handleSearchInput('manageSearchInput', 'manageClearBtn', 'manage')">
+        <span class="search-clear-btn" id="manageClearBtn" onclick="clearSearch('manageSearchInput', 'manageClearBtn', 'manage')">✕</span>
       </div>
 
       <div class="grid-container" id="existingGrid">Loading items...</div>
@@ -893,9 +867,11 @@
         <div class="counter-badge" id="trashCountText">0 items in bin</div>
       </div>
 
+      <!-- SEARCH BOX WITH CROSS (✕) BUTTON -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="trashSearchInput" placeholder="Search deleted items..." oninput="filterAndRenderTrash()">
+        <input type="text" id="trashSearchInput" placeholder="Search deleted items..." oninput="handleSearchInput('trashSearchInput', 'trashClearBtn', 'trash')">
+        <span class="search-clear-btn" id="trashClearBtn" onclick="clearSearch('trashSearchInput', 'trashClearBtn', 'trash')">✕</span>
       </div>
 
       <div class="grid-container" id="trashGrid">Loading bin items...</div>
@@ -904,13 +880,13 @@
 
 </div>
 
-<!-- Floating Multi-Delete Bar for Live Catalog -->
+<!-- Floating Multi-Delete Bar -->
 <div class="batch-bar" id="batchBar">
   <span class="batch-bar-count" id="batchCount">0 selected</span>
   <button class="batch-delete-btn" onclick="deleteSelectedProducts()">Move to Trash 🗑️</button>
 </div>
 
-<!-- Floating Multi-Restore / Hard Delete Bar for Recycle Bin -->
+<!-- Floating Multi-Restore Bar -->
 <div class="batch-bar" id="trashBatchBar">
   <span class="batch-bar-count" id="trashBatchCount">0 selected</span>
   <button class="batch-restore-btn" onclick="restoreSelectedProducts()">Restore ↩️</button>
@@ -1001,7 +977,7 @@
       .replace(/'/g, '&#39;');
   }
 
-  /* 🔔 NON-BLOCKING TOAST NOTIFICATION HELPER */
+  /* 🔔 NON-BLOCKING TOAST NOTIFICATION */
   window.showToast = function(message, type = 'info') {
     let container = document.getElementById('toastContainer');
     if (!container) {
@@ -1034,7 +1010,27 @@
     }, 3200);
   };
 
-  /* 🔑 SECRET PIN LOCK LOGIC */
+  /* 🔍 SEARCH CLEAR BUTTON LOGIC */
+  window.handleSearchInput = function(inputId, clearBtnId, type) {
+    const input = document.getElementById(inputId);
+    const clearBtn = document.getElementById(clearBtnId);
+    if (clearBtn) {
+      clearBtn.style.display = input.value.trim().length > 0 ? 'block' : 'none';
+    }
+    if (type === 'manage') filterAndRenderExisting();
+    if (type === 'trash') filterAndRenderTrash();
+  };
+
+  window.clearSearch = function(inputId, clearBtnId, type) {
+    const input = document.getElementById(inputId);
+    const clearBtn = document.getElementById(clearBtnId);
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (type === 'manage') filterAndRenderExisting();
+    if (type === 'trash') filterAndRenderTrash();
+  };
+
+  /* 🔑 PIN LOCK LOGIC */
   const ADMIN_PIN = "7860";
 
   window.checkPin = function() {
@@ -1072,26 +1068,23 @@
   const db = getFirestore(app);
 
   let selectedFiles = [];
-  let allUploadedProducts = []; // Live catalog
-  let allTrashProducts = [];    // Soft-deleted catalog
-  let categoriesList = [];     // Dynamic categories list from Firestore
+  let allUploadedProducts = []; 
+  let allTrashProducts = [];    
+  let categoriesList = [];     
 
   let selectedDeleteIds = new Set();
   let selectedTrashIds = new Set();
   
-  /* PAGINATION VARS */
   let lastVisibleDoc = null;
   let hasMoreProducts = true;
   let isFetching = false;
   const BATCH_SIZE = 20;
 
-  /* INITIALIZATION */
   window.addEventListener('DOMContentLoaded', async () => {
     await loadCategories();
     loadTrashCountBadge();
   });
 
-  /* 🏷️ DYNAMIC CATEGORIES MANAGEMENT */
   const DEFAULT_CATEGORIES = [
     "BLOUSE", "SAREE", "KURTI", "SINGLE KURTI", "3 PIECE", "2 PIECE", "LEHENGA", "GOWN"
   ];
@@ -1100,7 +1093,6 @@
     try {
       const snap = await getDocs(collection(db, "categories"));
       if (snap.empty) {
-        // Seed initial categories if empty
         for (const catName of DEFAULT_CATEGORIES) {
           await addDoc(collection(db, "categories"), {
             name: catName,
@@ -1113,14 +1105,11 @@
         categoriesList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       }
 
-      // Sort alphabetically
       categoriesList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-
       renderCategoryDropdowns();
       renderCategoryListModal();
     } catch (err) {
       console.error("Error loading categories:", err);
-      // Fallback
       categoriesList = DEFAULT_CATEGORIES.map((name, i) => ({ id: `default_${i}`, name }));
       renderCategoryDropdowns();
     }
@@ -1141,7 +1130,6 @@
   window.handleCategoryDropdownChange = function(selectElem) {
     if (selectElem.value === '__ADD_NEW__') {
       openCategoryModal();
-      // Reset select to first category
       if (categoriesList.length > 0) {
         selectElem.value = categoriesList[0].name;
       }
@@ -1218,26 +1206,19 @@
     const formattedNewName = newName.trim().toUpperCase();
 
     try {
-      // 1. Update category doc
-      await updateDoc(doc(db, "categories", catId), {
-        name: formattedNewName
-      });
+      await updateDoc(doc(db, "categories", catId), { name: formattedNewName });
 
-      // 2. Update products in Firestore that use old category name
       const q = query(collection(db, "products"), where("category", "==", oldName));
       const snap = await getDocs(q);
       
       if (!snap.empty) {
         const batch = writeBatch(db);
         snap.forEach(productDoc => {
-          batch.update(doc(db, "products", productDoc.id), {
-            category: formattedNewName
-          });
+          batch.update(doc(db, "products", productDoc.id), { category: formattedNewName });
         });
         await batch.commit();
       }
 
-      // Update local memory list
       const idx = categoriesList.findIndex(c => c.id === catId);
       if (idx !== -1) categoriesList[idx].name = formattedNewName;
 
@@ -1272,8 +1253,6 @@
     }
   };
 
-
-  /* TAB SWITCHING */
   window.switchTab = function(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
@@ -1296,7 +1275,6 @@
     }
   };
 
-  /* UPLOAD DRAG & DROP LOGIC */
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('fileInput');
   const previewGrid = document.getElementById('previewGrid');
@@ -1357,7 +1335,7 @@
   window.updateName = function (idx, val) { selectedFiles[idx].name = val; };
   window.updatePrice = function (idx, val) { selectedFiles[idx].price = val; };
 
-  /* CLIENT-SIDE IMAGE COMPRESSION HELPER (Canvas-Based) */
+  /* FAST CANVAS COMPRESSION HELPER */
   async function compressImage(file, maxWidth, maxHeight, quality) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1399,7 +1377,7 @@
                 });
                 resolve(compressedFile);
               } else {
-                reject(new Error('Canvas to Blob conversion failed'));
+                reject(new Error('Canvas conversion failed'));
               }
             }, 'image/jpeg', quality);
         };
@@ -1409,6 +1387,7 @@
     });
   }
 
+  /* FAST PARALLEL BULK UPLOAD (3 AT A TIME) */
   window.startBulkUpload = async function () {
     const category = document.getElementById('categorySelect').value;
     const pending = selectedFiles.filter(f => f.status !== 'done');
@@ -1424,19 +1403,12 @@
     }
 
     uploadBtn.disabled = true;
-    let done = 0;
+    let completedCount = 0;
     let failedCount = 0;
-    const MAX_SIZE = 32 * 1024 * 1024;
 
-    for (const item of pending) {
-      statusMsg.textContent = `⚡ Compressing & Uploading (${done + 1}/${pending.length}): ${item.name}...`;
+    const uploadSingleItem = async (item) => {
       try {
-        if (item.file.size > MAX_SIZE) {
-          throw new Error('File 32MB se bada hai, imgbb accept nahi karega');
-        }
-
-        const compressedFile = await compressImage(item.file, 1200, 1200, 0.85);
-
+        const compressedFile = await compressImage(item.file, 1200, 1200, 0.82);
         const formData = new FormData();
         formData.append("image", compressedFile, compressedFile.name);
 
@@ -1456,28 +1428,36 @@
           });
           item.status = 'done';
         } else {
-          throw new Error(imgbbRes.error?.message || 'imgbb upload failed');
+          throw new Error('imgbb upload failed');
         }
       } catch (err) {
         console.error(err);
         item.status = 'failed';
         failedCount++;
+      } finally {
+        completedCount++;
+        statusMsg.textContent = `⚡ Fast Uploading (${completedCount}/${pending.length})...`;
       }
-      done++;
+    };
+
+    // Process in batches of 3 parallel uploads
+    const BATCH_PARALLEL = 3;
+    for (let i = 0; i < pending.length; i += BATCH_PARALLEL) {
+      const chunk = pending.slice(i, i + BATCH_PARALLEL);
+      await Promise.all(chunk.map(item => uploadSingleItem(item)));
     }
 
     selectedFiles = selectedFiles.filter(f => f.status !== 'done');
 
     if (failedCount > 0) {
-      statusMsg.textContent = `⚠️ ${done - failedCount}/${done} upload hui, ${failedCount} fail ho gayi — marked photos dobara try karein.`;
+      statusMsg.textContent = `⚠️ ${completedCount - failedCount}/${completedCount} upload hui, ${failedCount} fail ho gayi — marked photos retry karein.`;
     } else {
-      statusMsg.textContent = `✅ Sabhi photos successfully upload ho gayi!`;
+      statusMsg.textContent = `✅ Sabhi photos successfully fast upload ho gayi!`;
     }
     renderPreviews();
     uploadBtn.disabled = false;
   };
 
-  /* FETCH LIVE CATALOG (EXCLUDING SOFT-DELETED ITEMS) */
   window.loadExistingProducts = async function () {
     const grid = document.getElementById('existingGrid');
     const loadBtn = document.getElementById('loadMoreAdminBtn');
@@ -1564,7 +1544,7 @@
     const searchVal = (document.getElementById('manageSearchInput')?.value || '').toLowerCase().trim();
 
     const filtered = allUploadedProducts.filter(item => {
-      if (item.isDeleted === true) return false; // Safety check
+      if (item.isDeleted === true) return false;
       const matchName = (item.name || '').toLowerCase().includes(searchVal);
       const matchCat = (item.category || '').toLowerCase().includes(searchVal);
       const matchPrice = (item.price !== undefined && item.price !== null) ? item.price.toString().includes(searchVal) : false;
@@ -1647,7 +1627,6 @@
     }
   }
 
-  /* 🗑️ RECYCLE BIN / TRASH SYSTEM (SOFT DELETE & RESTORE) */
   async function loadTrashCountBadge() {
     try {
       const snap = await getDocs(collection(db, "products"));
@@ -1783,7 +1762,6 @@
     }
   }
 
-  /* SOFT DELETE ACTION (MOVE TO TRASH) */
   window.deleteSelectedProducts = async function () {
     if (selectedDeleteIds.size === 0) return;
 
@@ -1814,7 +1792,6 @@
     }
   };
 
-  /* RESTORE ACTIONS */
   window.restoreSingleProduct = async function(id) {
     try {
       await updateDoc(doc(db, "products", id), {
@@ -1866,7 +1843,6 @@
     }
   };
 
-  /* PERMANENT DELETE ACTIONS */
   window.permanentlyDeleteSingle = async function(id) {
     if (!confirm("Kya aap is item ko hamesha ke liye PERMANENTLY DELETE karna chahte hain? Yeh undo nahi ho sakta!")) return;
 
@@ -1916,8 +1892,6 @@
     }
   };
 
-
-  /* EDIT PRODUCT MODAL */
   window.openEditModal = function (id) {
     const item = allUploadedProducts.find(p => p.id === id);
     if (!item) return;
