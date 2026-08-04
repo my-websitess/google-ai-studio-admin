@@ -789,7 +789,6 @@
     <p class="brand-subtitle">Catalog Upload, Dynamic Categories & Recycle Bin System</p>
   </div>
 
-  <!-- NAV TABS -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('upload')">Upload Photos</button>
     <button class="tab-btn" onclick="switchTab('manage')">Manage Catalog</button>
@@ -804,7 +803,6 @@
         <div class="form-group">
           <label>Select Category</label>
           <select id="categorySelect" onchange="handleCategoryDropdownChange(this)">
-            <!-- Dynamically Populated -->
           </select>
         </div>
         <div class="form-group">
@@ -839,7 +837,6 @@
         <div class="counter-badge" id="totalCountText">0 items loaded</div>
       </div>
 
-      <!-- SEARCH BOX WITH CROSS (✕) BUTTON -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input type="text" id="manageSearchInput" placeholder="Search by name, category, or price..." oninput="handleSearchInput('manageSearchInput', 'manageClearBtn', 'manage')">
@@ -847,10 +844,6 @@
       </div>
 
       <div class="grid-container" id="existingGrid">Loading items...</div>
-      
-      <div style="text-align: center; margin-top: 30px;">
-        <button id="loadMoreAdminBtn" class="btn-pill btn-pill-gold" style="display: none; padding: 12px 30px; font-size: 14px;" onclick="loadMoreExistingProducts()">Load More Items</button>
-      </div>
     </div>
   </div>
 
@@ -867,7 +860,6 @@
         <div class="counter-badge" id="trashCountText">0 items in bin</div>
       </div>
 
-      <!-- SEARCH BOX WITH CROSS (✕) BUTTON -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input type="text" id="trashSearchInput" placeholder="Search deleted items..." oninput="handleSearchInput('trashSearchInput', 'trashClearBtn', 'trash')">
@@ -909,7 +901,6 @@
     <div class="form-group" style="margin-bottom: 18px;">
       <label>Category</label>
       <select id="editCategory" onchange="handleCategoryDropdownChange(this)">
-        <!-- Dynamically Populated -->
       </select>
     </div>
     <div class="modal-actions">
@@ -953,7 +944,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { 
     getFirestore, 
-    enableIndexedDbPersistence, // <-- Added IndexedDB Caching Import
+    enableIndexedDbPersistence,
     collection, 
     addDoc, 
     getDocs, 
@@ -962,8 +953,6 @@
     doc, 
     query, 
     orderBy, 
-    limit, 
-    startAfter, 
     writeBatch,
     where
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1068,12 +1057,12 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  /* ⚡ ENABLE INDEXEDDB OFFLINE PERSISTENCE FOR ADMIN PANEL */
+  /* ⚡ ENABLE FIRESTORE OFFLINE INDEXEDDB CACHING */
   enableIndexedDbPersistence(db).catch((err) => {
     if (err.code === 'failed-precondition') {
-      console.warn('IndexedDB failed: Multiple tabs open at once.');
+      console.log('Persistence failed: Multiple tabs open');
     } else if (err.code === 'unimplemented') {
-      console.warn('IndexedDB not supported by browser.');
+      console.log('Browser does not support offline persistence');
     }
   });
 
@@ -1084,11 +1073,6 @@
 
   let selectedDeleteIds = new Set();
   let selectedTrashIds = new Set();
-  
-  let lastVisibleDoc = null;
-  let hasMoreProducts = true;
-  let isFetching = false;
-  const BATCH_SIZE = 20;
 
   window.addEventListener('DOMContentLoaded', async () => {
     await loadCategories();
@@ -1397,7 +1381,7 @@
     });
   }
 
-  /* FAST PARALLEL BULK UPLOAD (3 AT A TIME) */
+  /* FAST PARALLEL BULK UPLOAD */
   window.startBulkUpload = async function () {
     const category = document.getElementById('categorySelect').value;
     const pending = selectedFiles.filter(f => f.status !== 'done');
@@ -1467,84 +1451,33 @@
     uploadBtn.disabled = false;
   };
 
+  /* 🔍 FIXED FULL-CATALOG LOAD FOR SEARCH & OFFLINE CACHE */
   window.loadExistingProducts = async function () {
     const grid = document.getElementById('existingGrid');
-    const loadBtn = document.getElementById('loadMoreAdminBtn');
     grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:var(--ivory-dim); padding: 40px;'>Loading inventory...</p>";
     selectedDeleteIds.clear();
     updateBatchBar();
     allUploadedProducts = [];
-    lastVisibleDoc = null;
-    hasMoreProducts = true;
 
     try {
       const q = query(
         collection(db, "products"), 
-        orderBy("createdAt", "desc"), 
-        limit(BATCH_SIZE)
+        orderBy("createdAt", "desc")
       );
       const snapshot = await getDocs(q);
 
-      if (snapshot.empty) {
-        hasMoreProducts = false;
-      } else {
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        if (snapshot.docs.length < BATCH_SIZE) hasMoreProducts = false;
-
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          if (data.isDeleted !== true) {
-            allUploadedProducts.push({ id: docSnap.id, ...data });
-          }
-        });
-      }
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.isDeleted !== true) {
+          allUploadedProducts.push({ id: docSnap.id, ...data });
+        }
+      });
 
       document.getElementById('totalCountText').textContent = `${allUploadedProducts.length} items loaded`;
-      loadBtn.style.display = hasMoreProducts ? 'inline-block' : 'none';
       filterAndRenderExisting();
     } catch(err) {
       console.error(err);
       grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:var(--danger); padding: 40px;'>Error loading catalog.</p>";
-    }
-  };
-
-  window.loadMoreExistingProducts = async function () {
-    if (!hasMoreProducts || isFetching || !lastVisibleDoc) return;
-    isFetching = true;
-    const loadBtn = document.getElementById('loadMoreAdminBtn');
-    loadBtn.textContent = "Loading...";
-
-    try {
-      const q = query(
-        collection(db, "products"), 
-        orderBy("createdAt", "desc"), 
-        startAfter(lastVisibleDoc), 
-        limit(BATCH_SIZE)
-      );
-      const snapshot = await getDocs(q);
-
-      if (snapshot.empty) {
-        hasMoreProducts = false;
-      } else {
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-        if (snapshot.docs.length < BATCH_SIZE) hasMoreProducts = false;
-
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          if (data.isDeleted !== true) {
-            allUploadedProducts.push({ id: docSnap.id, ...data });
-          }
-        });
-      }
-
-      document.getElementById('totalCountText').textContent = `${allUploadedProducts.length} items loaded`;
-      filterAndRenderExisting();
-    } catch (err) {
-      console.error("Load More error:", err);
-    } finally {
-      isFetching = false;
-      loadBtn.textContent = "Load More Items";
-      loadBtn.style.display = hasMoreProducts ? 'inline-block' : 'none';
     }
   };
 
